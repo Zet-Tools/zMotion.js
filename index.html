@@ -1137,10 +1137,12 @@
 
 <script>
 $( document ).ready(function() {
-  var maze = new zMotion($('.maze'),{duration:30000});
-  var maze1 = new zMotion($('.maze1'),{duration:10000});
-  maze.draw();
-  maze1.draw();
+  var maze = new zMotion($('.maze1'),{
+		duration:1000,
+		delay : 200
+	 });
+  maze.clear();
+	maze.draw();
 });
 </script>
 

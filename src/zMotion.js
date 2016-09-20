@@ -7,6 +7,8 @@
     const PATH = 'path';
     const LINE = 'line';
 
+    var svgArr = [];
+
     var defaults = {
       delay     : 20,
       shffle    : false,
@@ -15,26 +17,25 @@
     }
 
     var settings = $.extend({}, defaults, options);
+    settings.delayIncrement = settings.delay;
 
     var svgElement = element;
 
     this.clear = function () {
-      svgHandler.parse(svgElement, 'clear');
+      svgHandler.setAction(svgHandler.clearElement);
     }
 
     this.draw = function () {
-      svgHandler.parse(svgElement, 'draw');
+      svgHandler.setAction(svgHandler.dashDraw);
     }
 
     var init = function () {
-      if (settings.clear) {
-        svgHandler.parse(svgElement, 'clear');
-      }
+        svgHandler.parse(svgElement);
     }
 
     var svgHandler = {
 
-      parse : function (svg, action) {
+      parse : function (svg) {
 
         var self = this;
         svg.children().each(function () {
@@ -44,41 +45,48 @@
           var line    = svgNode.is(LINE);
 
           if (group) {
-            self.parse(svgNode, action);
+            self.parse(svgNode);
           } else if (path) {
-            if (action === 'clear') {
-              self.clearElement(svgNode, self.getPathLength(svgNode));
-            } else if (action === 'draw') {
-              self.dashDraw(svgNode, settings.duration);
-            }
-
+            svgNode.svgLength = self.getPathLength(svgNode);
+            svgArr.push(svgNode);
           } else if (line) {
-            if (action === 'clear') {
-              self.clearElement(svgNode, self.getLineLength(svgNode));
-            } else if (action === 'draw') {
-              self.dashDraw(svgNode, settings.duration);
-            }
-
+            svgNode.svgLength = self.getLineLength(svgNode);
+            svgArr.push(svgNode);
           }
 
         });
-
       },
 
-      clearElement : function (svgNode, elementLength) {
+      setAction : function (fun) {
+        var i;
+        var svgArrLength = svgArr.length;
+        for (i = 0 ; i < svgArrLength ; i++) {
+          fun(svgArr[i]);
+        }
+      },
+
+      clearElement : function (svgNode) {
           svgNode.css({
-            "stroke-dasharray": elementLength + "px",
-            "stroke-dashoffset": elementLength + "px"
+            "stroke-dasharray": svgNode.svgLength + "px",
+            "stroke-dashoffset": svgNode.svgLength + "px"
           });
       },
 
-      dashDraw: function(el, duration) {
-        el.animate({
-          "stroke-dashoffset": 0
-        }, {
-          queue: false,
-          duration: duration
-        });
+      dashDraw: function(svgNode) {
+
+        setTimeout((function(el){
+          return function () {
+            el.animate({
+              "stroke-dashoffset": 0
+            }, {
+              queue: false,
+              duration: settings.duration
+            });
+          }
+
+
+        })(svgNode), settings.delay);
+        settings.delay += settings.delayIncrement;
       },
 
       getPathLength : function (el) {
