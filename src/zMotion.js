@@ -10,19 +10,23 @@
     const POLYGON = 'polygon';
     const CIRCLE  = 'circle';
 
-    var svgArr = [];
+    var svgArr        = [];
     var svgArrShuffle = [];
+    var delay         = 0
 
     var defaults = {
-      delay             : 20,
+      delay             : 2,
       shuffle           : false,
-      strokeDrawingTime : 5000,
-      fillDrawingTime   : 5000,
+      strokeDrawingTime : 100,
+      fillDrawingTime   : 700,
       clearStroke       : true,
       clearFill         : true,
       drawStroke        : true,
       drawFill          : true,
-      easing            : 'easeInQuad'
+      fillAfterStroke   : false,
+      easing            : 'easeInQuad',
+      terminus          : true,
+      reverse           : false
     }
 
     var settings = $.extend({}, defaults, options);
@@ -32,18 +36,22 @@
 
     this.clear = function () {
       svgHandler.setAction(svgHandler.clearElement);
-    }
+    };
 
     this.draw = function () {
       svgHandler.setAction(svgHandler.dashDraw);
+    };
+
+    this.rewind = function () {
+      svgHandler.setAction(svgHandler.dashRewind);
     }
 
     var init = function () {
         svgHandler.parse(svgElement);
-        console.log(svgArr);
-        if (settings.clearStroke) {
-          THIS.clear()
-        };
+        // console.log(svgArr);
+        // if (settings.clearStroke) {
+        //   THIS.clear()
+        // };
 
         if (settings.shuffle) {
           svgHandler.arrayShuffle(svgArr);
@@ -76,6 +84,7 @@
             svgArr.push(svgNode);
           }else if (polygon) {
             svgNode.svgLength = self.getPolygonLength(svgNode);
+            console.log(svgNode.svgLength);
             svgArr.push(svgNode);
           }else if (circle) {
             svgNode.svgLength = self.getCircleLength(svgNode);
@@ -87,12 +96,59 @@
 
       },
 
-      setAction : function (fun) {
-        var i;
-        var svgArrLength = svgArr.length;
-        for (i = 0 ; i < svgArrLength ; i++) {
-          fun(svgArr[i]);
+      setAction : function (fn) {
+        if(settings.reverse){
+          if (settings.terminus) {
+            this.effect.terminusReverse(fn);
+          }else{
+            this.effect.normalReverse(fn);
+          }
+        }else{
+          if (settings.terminus) {
+            this.effect.terminus(fn);
+          }else{
+            this.effect.normal(fn);
+          }
         }
+      },
+
+      effect : {
+        normal : function (fn) {
+          var i;
+          var svgArrLength = svgArr.length;
+          for (i = 0 ; i < svgArrLength ; i++) {
+            fn(svgArr[i]);
+          }
+        },
+
+        terminus : function (fn) {
+          var i,j;
+          var svgArrLength = svgArr.length;
+          for (var i = 0, j = svgArrLength - 1; i <= svgArrLength / 2 &&
+             j >= svgArrLength / 2; i++, j--) {
+            fn(svgArr[i]);
+            fn(svgArr[j]);
+          }
+        },
+
+        normalReverse : function (fn) {
+          var i;
+          var svgArrLength = svgArr.length;
+          for (i = svgArrLength-1 ; i >= 0 ; i--) {
+            fn(svgArr[i]);
+          }
+        },
+
+        terminusReverse : function (fn) {
+          var i,j;
+          var svgArrLength = svgArr.length;
+          for (var i = svgArrLength / 2 - 1, j = svgArrLength / 2; i >= 0 &&
+              j <= svgArrLength - 1; i--, j++) {
+            fn(svgArr[i]);
+            fn(svgArr[j]);
+          }
+        }
+
       },
 
       clearElement : function (svgNode) {
@@ -125,10 +181,50 @@
 
 
             if (settings.clearFill && settings.drawFill) {
-              el.animate({
+              if(settings.fillAfterStroke){
+                delay = settings.strokeDrawingTime
+              }
+              el.delay(delay).animate({
                 "fill-opacity": 1
               }, {
+                queue     : true,
+                duration  : settings.fillDrawingTime,
+                easing    : settings.easing
+              });
+            }
+          }
+
+
+        })(svgNode), settings.delay);
+        settings.delay += settings.delayIncrement;
+      },
+
+      dashRewind: function(svgNode) {
+
+        setTimeout((function(el){
+          return function () {
+            if (settings.clearStroke && settings.drawStroke) {
+              el.css({
+                "stroke-dasharray": el.svgLength + "px"
+              });
+              el.animate({
+                "stroke-dashoffset": el.svgLength + 'px'
+              }, {
                 queue     : false,
+                duration  : settings.strokeDrawingTime,
+                easing    : settings.easing
+              });
+            }
+
+
+            if (settings.clearFill && settings.drawFill) {
+              if(settings.fillAfterStroke){
+                delay = settings.strokeDrawingTime
+              }
+              el.delay(delay).animate({
+                "fill-opacity": 0
+              }, {
+                queue     : true,
                 duration  : settings.fillDrawingTime,
                 easing    : settings.easing
               });
