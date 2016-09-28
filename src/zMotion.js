@@ -48,10 +48,6 @@
 
     var init = function () {
         svgHandler.parse(svgElement);
-        // console.log(svgArr);
-        // if (settings.clearStroke) {
-        //   THIS.clear()
-        // };
 
         if (settings.shuffle) {
           svgHandler.arrayShuffle(svgArr);
@@ -142,16 +138,18 @@
         terminusReverse : function (fn) {
           var i,j;
           var svgArrLength = svgArr.length;
-          for (var i = svgArrLength / 2 - 1, j = svgArrLength / 2; i >= 0 &&
-              j <= svgArrLength - 1; i--, j++) {
+          for ( i = Math.ceil(svgArrLength / 2 - 1), j = Math.floor(svgArrLength / 2); i >= 0 &&
+             j < svgArrLength ; i--, j++) {
             fn(svgArr[i]);
             fn(svgArr[j]);
           }
+
         }
 
       },
 
       clearElement : function (svgNode) {
+        try{
           svgNode.css({
             "stroke-dasharray": svgNode.svgLength + "px",
             "stroke-dashoffset": svgNode.svgLength + "px"
@@ -162,7 +160,7 @@
               "fill-opacity":"0"
             });
           }
-
+        }catch(e){}
       },
 
       dashDraw: function(svgNode) {
