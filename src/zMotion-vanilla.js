@@ -4,7 +4,8 @@
 
         var self    = this;
         var el      = [];
-        var node    = [];
+        // array of all the svgs
+        var svg     = [];
 
         var init = function () {
             prepareElements();
@@ -14,12 +15,66 @@
 
         var nodeHandler = {
 
+            rect        : "rect",
+            circle      : "circle",
+            ellipse     : "ellipse",
+            polygon     : "polygon",
+            polyline    : "polyline",
+            line        : "line",
+            path        : "path",
+            group       : "g",
+
             init : function () {
                 this.parseElements();
+                console.log(svg);
             },
 
             parseElements : function () {
+                var i;
+                var elLength = el.length;
+                for (i = 0 ; i < elLength ; i++) {
+                    svg[i] = [];
+                    this.parseSvgNodes(el[i], i);
+                }
+            },
 
+            parseSvgNodes : function (svgNode, index) {
+                var i, node;
+                var svgNodeLength = svgNode.children.length;
+                for ( i = 0 ; i < svgNodeLength ; i++){
+                    node = svgNode.children[i];
+                    switch (node.nodeName) {
+                        case this.group:
+                            this.parseSvgNodes(node, index);
+                            break;
+                        case this.path:
+                            node.zLength = svgHelper.getPathLength(node);
+                            break;
+                        case this.rect:
+                            node.zLength = svgHelper.getRectLength(node);
+                            break;
+                        case this.polygon:
+                            node.zLength = svgHelper.getPolygonLength(node, false);
+                            break;
+                        case this.polyline:
+                            node.zLength = svgHelper.getPolygonLength(node, true);
+                            break;
+                        case this.circle:
+                            node.zLength = svgHelper.getCircleLength(node);
+                            break;
+                        case this.ellipse:
+                            node.zLength = svgHelper.getEllipseLength(node);
+                            break;
+                        case this.line:
+                            node.zLength = svgHelper.getLineLength(node);
+                            break;
+                    }
+
+                    if (node.nodeName !== this.group) {
+                        svg[index].push(node);
+                    }
+
+                }
             }
 
         }
@@ -33,13 +88,9 @@
         function prepareElements () {
             if (element instanceof jQuery) {
                 var i, elementLength = element.length;
-                if (elementLength > 1){
-                    for (i = 0 ; i < elementLength ; i++) {
-                        el.push(element[i]);
-                    }
-                    return;
+                for (i = 0 ; i < elementLength ; i++) {
+                    el.push(element[i]);
                 }
-                el = element[0];
                 return;
             }
             el = element;
