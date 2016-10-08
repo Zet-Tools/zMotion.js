@@ -6,12 +6,76 @@
         var el      = [];
         // array of all the svgs
         var svg     = [];
+        var settings = {
+            duration    : '0.7s',
+            clearStroke : true,
+            clearFill   : true
+        }
+
+        this.clear = function () {
+            svgManager.run('clear');
+        };
 
         var init = function () {
             prepareElements();
             nodeHandler.init();
+            svgManager.init();
         }
 
+        var svgManager = {
+
+            init : function () {
+                svgManager.run('clear');
+            },
+
+            run : function (action) {
+                var i;
+                var svgLength = svg.length;
+                for (i = 0 ; i < svgLength ; i++) {
+                    this.processFactory(svg[i], action);
+                };
+            },
+
+            clearSVG : function (svg, clearStroke, clearFill) {
+                var i, node;
+                var clearStroke = typeof clearStroke !== 'undefined' ? clearStroke : true;
+                var clearFill   = typeof clearFill !== 'undefined' ? clearFill : true;
+                var svgLength   = svg.length;
+                for (i = 0 ; i < svgLength ; i++){
+                    node = svg[i];
+                    node.style.transition = "all";
+                    if (clearStroke) {
+                        this.clearStroke(node);
+                    }
+
+                    if (clearFill) {
+                        this.clearFill(node)
+                    }
+                }
+            },
+
+            clearStroke : function (node) {
+                node.style.strokeDashoffset     = node.zLength;
+                node.style.strokeDasharray      = node.zLength;
+            },
+
+            clearFill : function (node) {
+                node.style.fillOpacity     = 0;
+            },
+
+            processFactory : function (svg, action) {
+                var that = this;
+                setTimeout (function () {
+                    switch (action) {
+                        case 'clear':
+                            that.clearSVG(svg, settings.clearStroke, settings.clearFill);
+                            break;
+                        case 'draw' :
+                            break;
+                    }
+                },0);
+            }
+        }
 
         var nodeHandler = {
 
