@@ -7,14 +7,23 @@
         // array of all the svgs
         var svg     = [];
         var settings = {
-            duration    : '0.7s',
+            duration    : '5s',
+            delay       : 2000,
             clearStroke : true,
-            clearFill   : true
+            clearFill   : true,
+            drawEvery   : 2,
+            easing      : "linear"
         }
 
         this.clear = function () {
             svgManager.run('clear');
+            return this;
         };
+
+        this.draw = function () {
+            svgManager.run('draw');
+            return this;
+        }
 
         var init = function () {
             prepareElements();
@@ -25,7 +34,8 @@
         var svgManager = {
 
             init : function () {
-                svgManager.run('clear');
+                // svgManager.run('clear');
+                // svgManager.run('draw');
             },
 
             run : function (action) {
@@ -43,7 +53,8 @@
                 var svgLength   = svg.length;
                 for (i = 0 ; i < svgLength ; i++){
                     node = svg[i];
-                    node.style.transition = "all";
+                    this.toogleTransition(node,false);
+
                     if (clearStroke) {
                         this.clearStroke(node);
                     }
@@ -52,15 +63,68 @@
                         this.clearFill(node)
                     }
                 }
+
+            },
+
+            drawSvg : function (svg, drawStroke, drawFill) {
+                var i, node;
+                var drawStroke = typeof drawStroke !== 'undefined' ? drawStroke : true;
+                var drawFill   = typeof drawFill !== 'undefined' ? drawFill : true;
+                var svgLength  = svg.length;
+                for (i = 0 ; i < svgLength ; i++){
+                    node = svg[i];
+                    this.toogleTransition(node,true);
+
+                    if (drawStroke) {
+                        this.drawStroke(node);
+                    }
+
+                    if (drawFill) {
+                        this.drawFill(node)
+                    }
+                }
+
+
+            },
+
+            toogleTransition : function (node, bool) {
+                if(bool){
+                    setTimeout(function () {
+                        node.style.transition = "all";
+                        node.style.transitionDuration = settings.duration;
+                        node.style.transitionTimingFunction = settings.easing;
+                    },0)
+                    return;
+                }
+                setTimeout(function () {
+                    node.style.transition = "none";
+                    node.style.transitionDuration = 0;
+                },0)
+
+            },
+
+            drawStroke : function (node) {
+                setTimeout (function () {
+                    node.style.strokeDashoffset = 0;
+                },0)
+
+            },
+
+            drawFill : function (node) {
+                setTimeout (function () {
+                    node.style.transitionDuration = settings.duration;
+                    node.style.fillOpacity = 1;
+                },0)
+
             },
 
             clearStroke : function (node) {
-                node.style.strokeDashoffset     = node.zLength;
-                node.style.strokeDasharray      = node.zLength;
+                node.style.strokeDashoffset = node.zLength;
+                node.style.strokeDasharray  = node.zLength;
             },
 
             clearFill : function (node) {
-                node.style.fillOpacity     = 0;
+                node.style.fillOpacity = 0;
             },
 
             processFactory : function (svg, action) {
@@ -71,6 +135,7 @@
                             that.clearSVG(svg, settings.clearStroke, settings.clearFill);
                             break;
                         case 'draw' :
+                            that.drawSvg(svg, settings.drawStroke, settings.drawFill);
                             break;
                     }
                 },0);
@@ -162,8 +227,8 @@
 
         init();
         // used for debuggin
-        this.testNode = el;
-        return this.testNode;
+        // this.testNode = el;
+        // return this.testNode;
     }
 
 
