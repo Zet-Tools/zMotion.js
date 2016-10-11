@@ -7,13 +7,21 @@
         // array of all the svgs
         var svg     = [];
         var settings = {
-            duration    : '5s',
-            delay       : 2000,
+            duration    : '1s',
+            delay       : 10,
             clearStroke : true,
             clearFill   : true,
-            drawEvery   : 2,
+            drawStroke  : true,
+            drawFill    : true,
+            terminus    : true,
+            reverse     : true,
             easing      : "linear"
         }
+
+        var delay = {
+            stroke : settings.delay,
+            fill   : settings.delay
+        };
 
         this.clear = function () {
             svgManager.run('clear');
@@ -48,8 +56,8 @@
 
             clearSVG : function (svg, clearStroke, clearFill) {
                 var i, node;
-                var clearStroke = typeof clearStroke !== 'undefined' ? clearStroke : true;
-                var clearFill   = typeof clearFill !== 'undefined' ? clearFill : true;
+                var clearStroke = settings.clearStroke;
+                var clearFill   = settings.clearFill;
                 var svgLength   = svg.length;
                 for (i = 0 ; i < svgLength ; i++){
                     node = svg[i];
@@ -66,26 +74,18 @@
 
             },
 
-            drawSvg : function (svg, drawStroke, drawFill) {
-                var i, node;
-                var drawStroke = typeof drawStroke !== 'undefined' ? drawStroke : true;
-                var drawFill   = typeof drawFill !== 'undefined' ? drawFill : true;
-                var svgLength  = svg.length;
-                for (i = 0 ; i < svgLength ; i++){
-                    node = svg[i];
-                    this.toogleTransition(node,true);
-
-                    if (drawStroke) {
-                        this.drawStroke(node);
-                    }
-
-                    if (drawFill) {
-                        this.drawFill(node)
-                    }
+            drawSvg : function (svg) {
+                if (!settings.terminus && !settings.reverse) {
+                    this.normal(svg);
+                }else if(!settings.terminus && settings.reverse) {
+                    this.reverse(svg);
+                }else if(settings.terminus && !settings.reverse) {
+                    this.terminus(svg);
+                }else if(settings.terminus && settings.reverse) {
+                    this.terminusReverse(svg);
                 }
-
-
             },
+
 
             toogleTransition : function (node, bool) {
                 if(bool){
@@ -100,22 +100,21 @@
                     node.style.transition = "none";
                     node.style.transitionDuration = 0;
                 },0)
-
             },
 
             drawStroke : function (node) {
                 setTimeout (function () {
                     node.style.strokeDashoffset = 0;
-                },0)
-
+                },delay.stroke);
+                delay.stroke += settings.delay;
             },
 
             drawFill : function (node) {
                 setTimeout (function () {
                     node.style.transitionDuration = settings.duration;
                     node.style.fillOpacity = 1;
-                },0)
-
+                },delay.fill);
+                delay.fill += settings.delay;
             },
 
             clearStroke : function (node) {
@@ -132,14 +131,109 @@
                 setTimeout (function () {
                     switch (action) {
                         case 'clear':
-                            that.clearSVG(svg, settings.clearStroke, settings.clearFill);
+                            that.clearSVG(svg);
                             break;
                         case 'draw' :
-                            that.drawSvg(svg, settings.drawStroke, settings.drawFill);
+                            that.drawSvg(svg);
                             break;
                     }
                 },0);
+            },
+
+
+            /**
+             *
+             *                  EFFECTS
+             *
+             */
+
+
+            normal : function (svg) {
+                var i, node;
+                var drawStroke = settings.drawStroke;
+                var drawFill   = settings.drawFill;
+                var svgLength  = svg.length;
+                for (i = 0 ; i < svgLength ; i++){
+                    node = svg[i];
+                    this.toogleTransition(node,true);
+
+                    if (drawStroke) {
+                        this.drawStroke(node);
+                    }
+
+                    if (drawFill) {
+                        this.drawFill(node)
+                    }
+                }
+            },
+
+            reverse : function (svg) {
+                var i, node;
+                var drawStroke = settings.drawStroke;
+                var drawFill   = settings.drawFill;
+                var svgLength  = svg.length;
+                for (i = svgLength-1 ; i >= 0 ; i--) {
+                    node = svg[i];
+                    this.toogleTransition(node,true);
+
+                    if (drawStroke) {
+                        this.drawStroke(node);
+                    }
+
+                    if (drawFill) {
+                        this.drawFill(node)
+                    }
+                }
+            },
+
+            terminus : function (svg) {
+                var i, j, node1, node;
+                var drawStroke = settings.drawStroke;
+                var drawFill   = settings.drawFill;
+                var svgLength  = svg.length;
+                for (var i = 0, j = svgLength - 1; i <= svgLength / 2 &&
+                   j >= svgLength / 2; i++, j--) {
+                    node1 = svg[i];
+                    node2 = svg[j];
+                    this.toogleTransition(node1,true);
+                    this.toogleTransition(node2,true);
+
+                    if (drawStroke) {
+                        this.drawStroke(node1);
+                        this.drawStroke(node2);
+                    }
+
+                    if (drawFill) {
+                        this.drawFill(node1)
+                        this.drawFill(node2)
+                    }
+                }
+            },
+
+            terminusReverse : function (svg) {
+                var i, j, node1, node;
+                var drawStroke = settings.drawStroke;
+                var drawFill   = settings.drawFill;
+                var svgLength  = svg.length;
+                for ( i = Math.ceil(svgLength / 2 - 1), j = Math.floor(svgLength / 2); i >= 0 &&
+                   j < svgLength ; i--, j++) {
+                    node1 = svg[i];
+                    node2 = svg[j];
+                    this.toogleTransition(node1,true);
+                    this.toogleTransition(node2,true);
+
+                    if (drawStroke) {
+                        this.drawStroke(node1);
+                        this.drawStroke(node2);
+                    }
+
+                    if (drawFill) {
+                        this.drawFill(node1)
+                        this.drawFill(node2)
+                    }
+                }
             }
+
         }
 
         var nodeHandler = {
@@ -155,7 +249,6 @@
 
             init : function () {
                 this.parseElements();
-                console.log(svg);
             },
 
             parseElements : function () {
@@ -226,9 +319,6 @@
         }
 
         init();
-        // used for debuggin
-        // this.testNode = el;
-        // return this.testNode;
     }
 
 
@@ -315,7 +405,7 @@
                 y : parseInt(n.getAttribute("y2")),
             }
 
-            return this.dist(c1,c2)
+            return Math.ceil(this.dist(c1,c2))
         },
 
         /**
