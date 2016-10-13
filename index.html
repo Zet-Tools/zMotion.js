@@ -3988,7 +3988,17 @@
 
 <script>
 
-	a = new zMotion($('.maze'));
+	a = new zMotion($('.maze'),{
+		duration    : '1s',
+		delay       : 10,
+		clearStroke : true,
+		clearFill   : true,
+		drawStroke  : true,
+		drawFill    : true,
+		terminus    : false,
+		reverse     : false,
+		easing      : "cubic-bezier(.87,-.41,.19,1.44)"
+	});
 	a.clear();
 
 	a.draw();

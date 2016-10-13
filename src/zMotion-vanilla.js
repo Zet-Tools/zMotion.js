@@ -6,9 +6,10 @@
         var el      = [];
         // array of all the svgs
         var svg     = [];
+        var rewind  = false;
         var settings = {
             duration    : '1s',
-            delay       : 10,
+            delay       : 3,
             clearStroke : true,
             clearFill   : true,
             drawStroke  : true,
@@ -17,6 +18,8 @@
             reverse     : true,
             easing      : "linear"
         }
+
+        settings = zTools.extend(settings, options);
 
         var delay = {
             stroke : settings.delay,
@@ -29,8 +32,15 @@
         };
 
         this.draw = function () {
+            rewind  = false;
             svgManager.run('draw');
             return this;
+        }
+
+        this.rewind = function () {
+            rewind  = true;
+            svgManager.run('draw');
+            return this
         }
 
         var init = function () {
@@ -49,6 +59,10 @@
             run : function (action) {
                 var i;
                 var svgLength = svg.length;
+                delay = {
+                    stroke : settings.delay,
+                    fill   : settings.delay
+                };
                 for (i = 0 ; i < svgLength ; i++) {
                     this.processFactory(svg[i], action);
                 };
@@ -104,15 +118,14 @@
 
             drawStroke : function (node) {
                 setTimeout (function () {
-                    node.style.strokeDashoffset = 0;
+                    node.style.strokeDashoffset = rewind ? node.zLength : 0;
                 },delay.stroke);
                 delay.stroke += settings.delay;
             },
 
             drawFill : function (node) {
                 setTimeout (function () {
-                    node.style.transitionDuration = settings.duration;
-                    node.style.fillOpacity = 1;
+                    node.style.fillOpacity = rewind ? 0 : 1;
                 },delay.fill);
                 delay.fill += settings.delay;
             },
@@ -321,6 +334,24 @@
         init();
     }
 
+    var zTools = {
+        extend : function () {
+            var extended = {};
+
+            for(key in arguments) {
+                var argument = arguments[key];
+                for (prop in argument) {
+                    if (Object.prototype.hasOwnProperty.call(argument, prop)) {
+                        extended[prop] = argument[prop];
+                    }
+                }
+            }
+
+            return extended;
+
+        }
+    }
+
 
     var svgHelper = {
 
@@ -459,6 +490,7 @@
         }
     }
 
+    window.zTools  = zTools;
     window.zSvg    = svgHelper;
     window.zMotion = zMotion;
 })(this)
