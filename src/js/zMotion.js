@@ -8,15 +8,15 @@
         var svg     = [];
         var rewind  = false;
         var settings = {
-            duration    : '1s',
-            delay       : 3,
-            shuffle     : true,
+            duration    : '3',
+            delay       : 300,
+            shuffle     : false,
             clearStroke : true,
             clearFill   : true,
             drawStroke  : true,
             drawFill    : true,
-            terminus    : true,
-            reverse     : true,
+            terminus    : false,
+            reverse     : false,
             easing      : "linear"
         }
 
@@ -268,6 +268,7 @@
             parseElements : function () {
                 var i;
                 var elLength = el.length;
+                if(elLength){}
                 for (i = 0 ; i < elLength ; i++) {
                     svg[i] = [];
                     this.parseSvgNodes(el[i], i);
@@ -325,14 +326,14 @@
          *
          */
         function prepareElements () {
-            if (element instanceof jQuery) {
+            if (typeof(jQuery) !== 'undefined' && element instanceof jQuery) {
                 var i, elementLength = element.length;
                 for (i = 0 ; i < elementLength ; i++) {
                     el.push(element[i]);
                 }
                 return;
             }
-            el = element;
+            el.push(element);
         }
 
         init();
@@ -371,7 +372,7 @@
          * @return {HTML node}
          */
         prepareNode : function  (element) {
-            if (element instanceof jQuery) {
+            if ( typeof(jQuery) !== 'undefined' && element instanceof jQuery) {
                 return element[0];
             }
             return element;
@@ -458,7 +459,7 @@
             var n = this.prepareNode(node);
             var w = parseInt(n.getAttribute('width'));
             var h = parseInt(n.getAttribute('height'));
-            return w * 2 + h * 2;
+            return Math.ceil(w * 2 + h * 2);
         },
 
         /**
