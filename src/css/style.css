@@ -7,7 +7,7 @@ html,body{
 
 #zMotion {
     width: 100%;
-    min-height:: 100%;
+    min-height: 100%;
     padding: 20px;
 }
 
@@ -35,6 +35,9 @@ html,body{
 #zMotion .icon svg{
     width: 24px !important;
     height: 24px !important;
+    fill: #337ab7;
+    stroke: #262626;
+    stroke-width: 10px;
 }
 
 #zMotion .preview{
@@ -50,8 +53,8 @@ html,body{
 #zMotion .preview svg{
     width: 100%;
     height: calc(100% - 20px);
-    fill: none;
-    stroke: #262626;
+    fill: #337ab7;
+    stroke: #337ab7;
     stroke-width:3px;
 }
 
@@ -59,4 +62,25 @@ html,body{
     max-height: 40vh;
     overflow-x: hidden;
     overflow-y: auto;
+}
+#zMotion .icons-container>div{
+    position: relative;
+    left: 20px;
+}
+
+#zMotion .actions{
+    padding: 28px;
+}
+
+#zMotion .logo svg{
+    height: 70px;
+    width: 11%;
+    float: left;
+    margin: 5px;
+    margin-left: 28px;
+}
+
+ #path4139 {
+    fill:#337ab7 !important;
+    stroke-width:0px !important;
 }
