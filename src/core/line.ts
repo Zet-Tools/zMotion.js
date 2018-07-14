@@ -1,11 +1,11 @@
-import {SvgHelper} from './svgHelper'
+import { SvgHelper } from "./svgHelper";
 
-export default class Path {
-	public element: SVGPathElement;
+export default class Line {
+	public element: SVGLineElement;
 	public length: string;
 	public visible: boolean = true;
 
-	constructor(path: SVGPathElement) {
+	constructor(path: SVGLineElement) {
 		this.element = path;
 		this.length = this.getLength();
 	}	
@@ -22,7 +22,7 @@ export default class Path {
 	}
 
 	private getLength(): string {
-		return SvgHelper.getPathLength(this.element);
+		return SvgHelper.getLineLength(this.element).toString();
 	}
 
 }

@@ -16,7 +16,7 @@ module.exports = {
     extensions: [ '.ts', '.js', '.json' ],
   },
   output: {
-    filename: 'bundle.js',
+    filename: 'zMotion.js',
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
