@@ -1,0 +1,31 @@
+{
+  "name": "zmotion",
+  "version": "1.0.0",
+  "description": "A svg animation library",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack",
+    "dev": "webpack-dev-server --history-api-fallback",
+    "lint": "tslint --project ."
+  },
+  "devDependencies": {
+    "awesome-typescript-loader": "^3.4.1",
+    "babel-core": "^6.26.0",
+    "file-loader": "^1.1.11",
+    "html-webpack-plugin": "^2.30.1",
+    "svg-inline-loader": "^0.8.0",
+    "tslint": "^5.9.1",
+    "typescript": "^2.6.2",
+    "webpack": "^3.10.0",
+    "webpack-dev-server": "^2.11.1"
+  },
+  "keywords": [
+    "SVG",
+    "zmotion",
+    "svg-path",
+    "path",
+    "svg-animation"
+  ],
+  "author": "Cosmin Seviciu",
+  "license": "MIT"
+}

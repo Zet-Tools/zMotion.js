@@ -1,0 +1,17 @@
+
+.DS_Store
+.awcache
+
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build
+dist/
+\.awcache/
+
+# Visual Studio
+.vscode/
+
+# IntelliJ
+.idea/

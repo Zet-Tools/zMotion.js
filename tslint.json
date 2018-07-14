@@ -1,0 +1,26 @@
+{
+	"defaultSeverity": "error",
+	"extends": [
+		"tslint:recommended"
+	],
+	"jsRules": {},
+	"rules": {
+		"member-access": [true, "no-public"],
+		"no-empty": false,
+		"member-ordering": [false],
+		"no-console": [false],
+		"object-literal-sort-keys": false,
+		"radix": false,
+		"one-variable-per-declaration": [false],
+		"indent": [true, "tabs", 4],
+		"trailing-comma": [true, {"multiline": "never", "singleline": "never"}],
+		"max-classes-per-file": [true, 5],
+		"align": [true, "statements"],
+		"no-bitwise": false,
+		"interface-name": [false],
+		"arrow-parens": false,
+		"array-type": [true, "array"],
+		"variable-name": [true, "check-format", "allow-leading-underscore"],
+		"max-line-length": [true, 130]
+	}
+}

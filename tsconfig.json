@@ -1,0 +1,17 @@
+{
+	"compilerOptions": {
+		"strict": true,
+		"noFallthroughCasesInSwitch": true,
+		"sourceMap": true,
+		"target": "es2015",
+		"outDir": "./dist",
+		"moduleResolution": "node"
+	},
+	"awesomeTypescriptLoaderOptions": {
+		"useBabel": true,
+		"useCache": true
+	},
+	"include": [
+		"./src"
+	]
+}
