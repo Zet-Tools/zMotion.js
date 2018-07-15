@@ -33,6 +33,7 @@ export const SvgHelper = {
             }
             return len;
         }
+        return len;
     },
 
     getLineLength : function (node:any) {
