@@ -6,21 +6,32 @@ export default class Node {
 	public element: SVGElement;
 	public length: string;
 	public visible: boolean = true;
-
-	constructor(path: SVGElement) {
-		this.element = path;
-		this.length = this.getLength();
-	}	
-
-	public drawPath() {
-		this.element.style.strokeDashoffset = "0";
-		this.visible = true;
+	private elementData: any = {
+		fill: 'black',
+		fillOpacity: '1'
 	}
 
-	public clearPath() {
+	constructor (path: SVGElement) {
+		this.element = path;
+		this.length = this.getLength();
+		this.collectElementData();
+	}	
+
+	public drawStroke (): void {
+		this.element.style.strokeDashoffset = "0";
+	}
+
+	public clearStroke (): void {
 		this.element.style.strokeDashoffset = this.length;
 		this.element.style.strokeDasharray = this.length;
-		this.visible = false;
+	}
+
+	public drawFill (): void {
+		this.element.style.fillOpacity = "1";
+	}
+
+	public clearFill (): void {
+		this.element.style.fillOpacity = "0";
 	}
 
 	protected getLength(): string {
@@ -41,6 +52,16 @@ export default class Node {
 		}
 
 		return "0";
+	}
+
+	private collectElementData (): void {
+		this.elementData.fill = this.element.getAttribute('fill') 
+									? this.element.getAttribute('fill') 
+									: this.element.style.fill ? this.element.style.fill : 'black';
+
+		this.elementData.fillOpacity = this.element.getAttribute('fill-opacity') 
+										? this.element.getAttribute('fill-opacity') 	
+										: this.element.style.fillOpacity ? this.element.style.fillOpacity : '1' ;
 	}
   
 }

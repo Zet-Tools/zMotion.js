@@ -12,9 +12,13 @@ type SVGElement = SVGSVGElement|null;
 export default class ZMotion {
 
 	private config = {
-		duration: 1,
-		easing: 'linear',
+		duration: 1.2,
+		easing: 'cubic-bezier(0.47, 0, 0.745, 0.715)',
 		animation: true,
+		delayBetweenElements: 1,
+		elementsAtOnce: 1,
+		shuffle: false,
+		reverse: true
 	}
 
 	private paths: Path[] = [];
@@ -37,22 +41,25 @@ export default class ZMotion {
 		console.log(this)
 	}
 
-	public erase ():void {
+	public erase (): this {
 		this.animators.map(animator => {
-			animator.clearPath();
+			animator.erase();
 		})
+		return this;
 	}
 
-	public draw(): void {
+	public draw(): this {
 		this.animators.map(animator => {
-			animator.drawPath();
+			animator.draw();
 		})
+		return this;
 	}
 
-	public setAnimation (state: boolean): void {
+	public enableAnimation (state: boolean): this  {
 		this.animators.map(animator => {
 			animator.setAnimation(state);
 		})
+		return this;
 	}
 
 	private extractNodes (): void {
@@ -95,10 +102,5 @@ export default class ZMotion {
 		this.circles.length ? this.animators.push(new Animator(this.circles, this.config)) : null;
 		this.polygons.length ? this.animators.push(new Animator(this.polygons, this.config)) : null;
 		this.polylines.length ? this.animators.push(new Animator(this.polylines, this.config)) : null;
-
 	}
-
-
-	
-
 }
