@@ -1,9 +1,7 @@
 import { SvgHelper } from '../helpers/svgHelper'
 
-type SVGElement = SVGPathElement|SVGGElement|SVGLineElement|SVGRectElement|SVGPolygonElement|SVGCircleElement|SVGEllipseElement;
-
 export default class Node {
-	public element: SVGElement;
+	public element: SVGGElement;
 	public length: string;
 	public visible: boolean = true;
 	private elementData: any = {
@@ -11,7 +9,7 @@ export default class Node {
 		fillOpacity: '1'
 	}
 
-	constructor (path: SVGElement) {
+	constructor (path: SVGGElement) {
 		this.element = path;
 		this.length = this.getLength();
 		this.collectElementData();
@@ -50,7 +48,6 @@ export default class Node {
 		} else if (this.element instanceof SVGEllipseElement) {
 			return SvgHelper.getEllipseLength(this.element).toString();
 		}
-
 		return "0";
 	}
 
